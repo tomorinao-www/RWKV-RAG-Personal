@@ -21,38 +21,35 @@ class Configuration:
         self.validate(self.config)
 
     def validate(self, settings):
+        is_init = settings.get('is_init')
         base_model_file = settings.get("base_model_path", '')
-        if not base_model_file:
+        if is_init and not base_model_file:
             raise ValueError(f"base_model_path is required")
-        if not os.path.exists(base_model_file):
+        if is_init and not os.path.exists(base_model_file):
             raise FileNotFoundError(f"base_model_path {base_model_file} ")
 
         bgem3_path = settings.get("embedding_path", '')
-        if not bgem3_path:
+        if is_init and not bgem3_path:
             raise ValueError(f"embedding_path is required")
-        if not os.path.exists(bgem3_path):
+        if is_init and not os.path.exists(bgem3_path):
             raise FileNotFoundError(f"embedding_path {bgem3_path} not found")
         rerank_path = settings.get("reranker_path", '')
-        if not rerank_path:
+        if is_init and not rerank_path:
             raise ValueError(f"reranker_path is required")
-        if not os.path.exists(rerank_path):
+        if is_init and not os.path.exists(rerank_path):
             raise FileNotFoundError(f"reranker_path {rerank_path} not found ")
-        state_path = settings.get("state_path", '') or ''
-        if state_path:
-            if not os.path.exists(state_path):
-                raise FileNotFoundError(f"state_path {state_path} ")
+
         self.default_base_model_path = base_model_file.strip()
         self.default_bgem3_path = bgem3_path
         self.default_rerank_path = rerank_path
-        self.default_state_path = state_path
 
         chroma_path = settings.get("chroma_path", '')
-        if not chroma_path:
+        if is_init and not chroma_path:
             raise ValueError(f"chroma_path is required ")
-        if not os.path.exists(chroma_path):
+        if is_init and not os.path.exists(chroma_path):
             raise NotADirectoryError(f"chroma_path {chroma_path} ")
         chroma_host = settings.get("chroma_host", '0.0.0.0')
-        if not chroma_host:
+        if is_init and not chroma_host:
             raise ValueError(f"chroma_host is required for index service")
 
         chroma_port = settings.get("chroma_port", '')
@@ -60,15 +57,47 @@ class Configuration:
             raise ValueError(f"chroma_port is required for index service")
 
         sqlite_db_path = settings.get("sqlite_db_path", '')
-        if not sqlite_db_path:
+        if is_init and not sqlite_db_path:
             raise ValueError(f"sqlite_db_path is required for index service")
         sqlite_db_path_dir = os.path.dirname(sqlite_db_path)
-        if not os.path.exists(sqlite_db_path_dir):
+        if is_init and not os.path.exists(sqlite_db_path_dir):
             raise NotADirectoryError(f"sqlite_db_path {sqlite_db_path_dir}")
         knowledge_base_path = settings.get("knowledge_base_path", '')
         if knowledge_base_path:
-            if not os.path.exists(knowledge_base_path):
+            if is_init and not os.path.exists(knowledge_base_path):
                 raise NotADirectoryError(f"knowledge_base_path {knowledge_base_path}")
+
+
+    def set_config(self, base_model_path=None, embedding_path=None, reranker_path=None,
+                   knowledge_base_path=None,sqlite_db_path=None, chroma_path=None, chroma_port=None):
+        is_save = False
+        if base_model_path and base_model_path != self.default_base_model_path:
+            self.default_base_model_path = base_model_path.strip()
+            self.config['base_model_path'] = base_model_path
+            is_save = True
+        if embedding_path and embedding_path != self.default_bgem3_path:
+            self.default_bgem3_path = embedding_path
+            self.config['embedding_path'] = embedding_path
+            is_save = True
+        if reranker_path and reranker_path != self.default_rerank_path:
+            self.default_rerank_path = reranker_path
+            self.config['reranker_path'] = reranker_path
+        if knowledge_base_path and knowledge_base_path != self.config.get("knowledge_base_path"):
+            self.config['knowledge_base_path'] = knowledge_base_path
+            is_save = True
+        if sqlite_db_path and sqlite_db_path != self.config.get("sqlite_db_path"):
+            self.config['sqlite_db_path'] = sqlite_db_path
+            is_save = True
+        if chroma_path and chroma_path != self.config.get("chroma_path"):
+            self.config['chroma_path'] = chroma_path
+            is_save = True
+        if chroma_port and chroma_port != self.config.get("chroma_port"):
+            self.config['chroma_port'] = chroma_port
+            is_save = True
+        if is_save:
+            self.config['is_init'] = True
+            with open(self.config_file_path, "w") as f:
+                yaml.dump(self.config, f)
 
 
 config = Configuration("ragq.yml")

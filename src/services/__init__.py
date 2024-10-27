@@ -1,4 +1,4 @@
-from .abc import AbstractServiceWorker
+from .abc import AbstractServiceWorker, PipeLine
 from .files_service import SqliteDB, FileStatusManager
 from .index_service import ServiceWorker as IndexServiceWorker
 from .llm_service import ServiceWorker as LLMServiceWorker, LLMService

@@ -172,9 +172,9 @@ class LLMService:
         try:
             pipeline = PIPELINE(self.model, "rwkv_vocab_v20230424")
             output = pipeline.generate(ctx, token_count=2000, args=gen_args, state=states_value)
+            return output
         except:
             raise ValueError(traceback.format_exc())
-        return output
 
 
 class ServiceWorker(AbstractServiceWorker):
@@ -198,12 +198,12 @@ class ServiceWorker(AbstractServiceWorker):
     def sampling_generate(self, cmd: dict):
         instruction = cmd.get("instruction")
         input_text = cmd["input_text"]
-        temperature = cmd.get('temperature', 1.0)
-        top_p = cmd.get('top_p', 0)
+        #temperature = cmd.get('temperature')
+        #top_p = cmd.get('top_p', )
         state_file = cmd.get('state_file')
         template_prompt = cmd.get('template_prompt')
         base_model_path = cmd.get('base_model_path')
-        value = self.llm_service.sampling_generate(instruction, input_text, state_file, temperature, top_p,
+        value = self.llm_service.sampling_generate(instruction, input_text, state_file,
                                                    template_prompt=template_prompt, base_model_path=base_model_path)
         return value
 
