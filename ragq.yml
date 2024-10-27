@@ -1,0 +1,8 @@
+base_model_path: /home/liulonghua/RWKV-RAG-models/rwkv_rag_qa_1b6.pth
+embedding_path: /home/liulonghua/RWKV-RAG-models/bge-m31
+reranker_path: /home/liulonghua/RWKV-RAG-models/BAAIbge-reranker-v2-m3
+knowledge_base_path:  /home/liulonghua/RWKV-RAG-Data
+sqlite_db_path: /home/liulonghua/RWKV-RAG-Data/files_services.db
+chroma_path: /home/liulonghua/RWKV-RAG-Data/chroma
+chroma_port: 9998
+chroma_host: localhost
