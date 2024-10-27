@@ -338,7 +338,7 @@ def rag_chain():
         st.session_state.chat_messages.append({"role": "RWKV", "content": sampling_results})
         with st.chat_message("RWKV"):
             st.write(sampling_results)
-        st.session_state.best_match = f"{st.session_state.best_match},{sampling_results}"
+        st.session_state.best_match = f"{st.session_state.best_match}"
 
 
 
