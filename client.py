@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 import streamlit as st
 import pandas as pd
+from torch.backends.opt_einsum import strategy
 
 from src.utils.loader import Loader
 from src.utils.internet import search_on_baike
@@ -338,13 +339,14 @@ def rag_chain(llm_service_worker, index_service_worker):
 
 
 
-def base_model_manager(files_status_manager, llm_service_worker, current_base_model_name, default_base_model_path):
+def base_model_manager(files_status_manager, llm_service_worker, current_base_model_name, default_base_model_path, current_strategy):
     st.title("模型管理")
     st.subheader("重启基底模型")
     st.markdown(
         '<span style="font-size: 16px; color: blue;">❗如果更换了基底模型可能影响到正在执行的任务。 更换后下次重启服务时基底模型就是本次更该后的模型</span>',
         unsafe_allow_html=True)
     st.write('当前基底模型: %s (%s)' % (current_base_model_name, default_base_model_path))
+    st.write('当前混合精度: %s' % current_strategy)
 
     base_model_list  = files_status_manager.get_base_model_list()
     active_base_models = OrderedDict()
@@ -366,18 +368,31 @@ def base_model_manager(files_status_manager, llm_service_worker, current_base_mo
         names = ['default']
 
     reload_base_model_name = st.selectbox("请选择要重启的基底模型:", [''] + list(active_base_models.keys()))
+
+    st.markdown('###### 混合精度设置')
+    st.warning('没有特殊要求不用修改')
+    cuda_count = st.number_input("输入 CUDA 数量", min_value=0, step=1, value=0)
+    cpu_count = st.number_input("输入 CPU 数量", min_value=0, step=1, value=0)
+    if cuda_count > 0 or cpu_count > 0:
+        is_change = True
+    else:
+        is_change = False
+    if cpu_count == 0 and cuda_count == 0:
+        strategy = 'cuda fp16'
+    else:
+        strategy = f"cuda fp16 *{cuda_count} -> cpu fp32 *{cpu_count}"
+
+    if is_change:
+        new_strategy = strategy
+    else:
+        new_strategy = current_strategy
+
     if st.button("重启") and reload_base_model_name:
         new_base_model_path = active_base_models[reload_base_model_name]
-        llm_service_worker.reload_base_model({'base_model_path': new_base_model_path})
+        llm_service_worker.reload_base_model({'base_model_path': new_base_model_path, 'strategy': new_strategy})
         st.success('重启成功')
-        project_config.set_llm_service_config(base_model_path=new_base_model_path)
+        project_config.set_config(base_model_path=new_base_model_path, strategy=new_strategy)
         files_status_manager.create_or_update_using_base_model(reload_base_model_name)
-
-
-
-    if reload_base_model_name == current_base_model_name:
-        st.warning("需要重启的基底模型与当前基底模型一样。")
-
 
     st.subheader("基底模型列表")
     if base_model_list:
@@ -602,13 +617,15 @@ def main():
                 collection_name_list = [i[0] for i in collections]
             else:
                 collection_name_list = []
+            current_strategy = project_config.config.get('strategy') or 'cuda fp16'
             default_base_model_name = files_status_manager.get_base_model_name_by_path(default_base_model_path) or 'default'
             st.session_state.kb_name = st.selectbox("正在使用的知识库", collection_name_list, )
-            st.session_state.base_model_path = st.selectbox('基底RWKV模型', [default_base_model_name])
+            st.session_state.base_model_path = st.selectbox('基底RWKV模型', [default_base_model_name], disabled=True)
+            st.session_state.strategy = st.selectbox("混合精度", [current_strategy], disabled=True)
             # st.session_state.state_file_path = st.selectbox("记忆状态", [default_state_path])
 
         if app_scenario == tabs_title[0]:
-            base_model_manager(files_status_manager, llm_service_worker, default_base_model_name, default_base_model_path)
+            base_model_manager(files_status_manager, llm_service_worker, default_base_model_name, default_base_model_path, current_strategy)
         elif app_scenario == tabs_title[1]:
             knowledgebase_manager(index_service_worker, files_status_manager)
         elif app_scenario == tabs_title[2]:

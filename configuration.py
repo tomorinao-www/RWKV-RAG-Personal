@@ -69,7 +69,7 @@ class Configuration:
 
 
     def set_config(self, base_model_path=None, embedding_path=None, reranker_path=None,
-                   knowledge_base_path=None,sqlite_db_path=None, chroma_path=None, chroma_port=None):
+                   knowledge_base_path=None,sqlite_db_path=None, chroma_path=None, chroma_port=None,strategy=None):
         is_save = False
         if base_model_path and base_model_path != self.default_base_model_path:
             self.default_base_model_path = base_model_path.strip()
@@ -93,6 +93,9 @@ class Configuration:
             is_save = True
         if chroma_port and chroma_port != self.config.get("chroma_port"):
             self.config['chroma_port'] = chroma_port
+            is_save = True
+        if strategy and strategy != self.config.get("strategy"):
+            self.config['strategy'] = strategy
             is_save = True
         if is_save:
             self.config['is_init'] = True

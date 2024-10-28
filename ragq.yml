@@ -1,4 +1,4 @@
-base_model_path: /home/liulonghua/RWKV-RAG-models/rwkv_rag_qa_1b6.pth
+base_model_path: /home/liulonghua/RWKV-RAG-models/rwkv_rag_qa_3b.pth
 chroma_host: localhost
 chroma_path: /home/liulonghua/RWKV-RAG-Data/chroma
 chroma_port: '9998'
@@ -7,3 +7,4 @@ is_init: true
 knowledge_base_path: /home/liulonghua/RWKV-RAG-Data
 reranker_path: /home/liulonghua/RWKV-RAG-models/BAAIbge-reranker-v2-m3
 sqlite_db_path: /home/liulonghua/RWKV-RAG-Data/files_services.db
+strategy: cuda fp16 *24 -> cpu fp32 *4

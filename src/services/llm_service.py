@@ -41,7 +41,8 @@ class LLMService:
         self.config = config
 
 
-        strategy = kwargs.get('strategy', 'cuda fp16')
+        strategy = kwargs.get('strategy') or 'cuda fp16'
+        print('tttttttttttttttt   %s' % strategy)
         self.model = OriginRWKV(base_rwkv, strategy=strategy)
         info = vars(self.model.args)
         print(f'load model from {base_rwkv},result is {info}')
@@ -77,7 +78,7 @@ class LLMService:
     #     self._current_states_path = states_file
     #     return states_value
 
-    def reload_base_model(self, base_model_path):
+    def reload_base_model(self, base_model_path, strategy=None):
         if not os.path.exists(base_model_path):
             raise FileNotFoundError(f'Model not found at {base_model_path}')
         if base_model_path == self._current_base_model_path and self.model:
@@ -88,7 +89,7 @@ class LLMService:
         self.model = None
         self._current_states_value = []
         gc.collect()
-        strategy = self.kwargs.get('strategy', 'cuda fp16')
+        strategy = strategy or 'cuda fp16'
         self.model = OriginRWKV(base_model_path, strategy=strategy)
         self._current_base_model_path = base_model_path
 
@@ -180,7 +181,7 @@ class LLMService:
 class ServiceWorker(AbstractServiceWorker):
     def init_with_config(self, config):
         base_model_file = config.get("base_model_path") # 默认使用配置文件的模型
-        self.llm_service = LLMService(base_model_file, config)
+        self.llm_service = LLMService(base_model_file, config, strategy=config.get('strategy'))
 
     def get_embeddings(self, cmd: dict):
         texts = cmd.get("texts")
@@ -209,5 +210,6 @@ class ServiceWorker(AbstractServiceWorker):
 
     def reload_base_model(self, cmd: dict):
         base_model_path = cmd.get("base_model_path")
-        self.llm_service.reload_base_model(base_model_path)
+        strategy = cmd.get("strategy")
+        self.llm_service.reload_base_model(base_model_path, strategy)
         return 'ok'

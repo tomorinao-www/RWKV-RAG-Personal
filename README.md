@@ -1,2 +1,2 @@
 # RWKV-RAG-Personal
-RWKV-RAG Personal Edition
+RWKV-RAG 
