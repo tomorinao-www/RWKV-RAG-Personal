@@ -47,13 +47,13 @@ RWKV-RAG 使用的模型针对中文数据集进行调优，因此在中文任�
 > 开始下载安装之前，确保系统已经安装Python3.10、NVIDIA驱动、CUDA12.1+
 
 
-1. **克隆 RWKV-RAG-Personal 仓库**
+### 1. 克隆 RWKV-RAG-Personal 仓库
 
 ```
 git clone https://github.com/AIIRWKV/RWKV-RAG-Personal.git
 ```
 
-2.  **安装依赖项**
+### 2. 安装依赖项
    
 进入到项目目录，安装Python依赖
 
@@ -146,7 +146,7 @@ tesseract --list-langs  # 查看已安装语言包
 - 在cmd输入： ```tesseract --list-langs```，如果能输出chi_sim，说明中文语言包安装成功。
 
 
-3. **修改配置文件**
+### 3. 修改配置文件
 
 可以通过修改项目配置文件 `ragq.yml` 修改配置参数，配置参数含义如下：
 
@@ -168,7 +168,7 @@ tesseract --list-langs  # 查看已安装语言包
 
 
 
-4. **启动服务**
+### 4. 启动服务
 
 RWKV-RAG-Personal目前是使用streamlit框架开发WebUI客户端，启动命令如下：
 
