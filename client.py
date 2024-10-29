@@ -506,7 +506,7 @@ def config_manage():
         key="reranker_path", value=project_config.default_rerank_path)
     chroma_path = st.text_input(
         "chromaDB数据存储目录(确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data/chroma):",
-        key="chroma_path", value=project_config.config.get('chroma_db_path'))
+        key="chroma_path", value=project_config.config.get('chroma_path'))
     chroma_port = st.text_input("chromaDB对外提供服务端口(确保端口没有被其它进程占用):", key="chroma_port",
                                 value=project_config.config.get('chroma_port'))
 
