@@ -181,7 +181,7 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
             payload_texts = payload_input.split("\n")
             for idx, chunk in enumerate(payload_texts):
                 tmp = [chunk]
-                embeddings = llm_service_worker.get_embeddings({'texts': tmp, "bgem3_path": project_config.default_bgem3_path})
+                embeddings = llm_service_worker.get_embeddings({'texts': tmp, "bgem3_path": project_config.default_embedding_path})
                 result = index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings, 'collection_name': st.session_state.kb_name})
                 st.write(f"文本 {idx + 1}: {result}")
     elif input_method == "服务端文件":
@@ -198,6 +198,8 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
         # 加载按钮
         load_button = st.button("加载并分割文件")
         if load_button and input_path and output_path:
+            input_path = input_path.strip()
+            output_path = output_path.strip()
             if not os.path.exists(input_path):
                 st.warning(f"知识库{input_path}不存在")
             if not os.path.exists(output_path):
@@ -216,7 +218,7 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
 
                 for idx,chunk in enumerate(chunks):
                     tmp = [chunk]
-                    embeddings = llm_service_worker.get_embeddings({'texts': tmp, "bgem3_path": project_config.default_bgem3_path})
+                    embeddings = llm_service_worker.get_embeddings({'texts': tmp, "bgem3_path": project_config.default_embedding_path})
                     index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings,
                                                                'collection_name': st.session_state.kb_name})
                 st.success(f"文件已加载并分割完成！分割后文件路径:{loader.output_files}")
@@ -264,7 +266,7 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
                     for idx,chunk in enumerate(chunks):
                         tmp = [chunk]
                         embeddings = llm_service_worker.get_embeddings(
-                            {'texts': tmp, "bgem3_path": project_config.default_bgem3_path})
+                            {'texts': tmp, "bgem3_path": project_config.default_embedding_path})
                         index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings,
                                                           'collection_name': st.session_state.kb_name})
                     st.success(f"文件已加载并分割完成！分割后文件路径:{loader.output_files}")
@@ -286,7 +288,7 @@ def rag_chain(llm_service_worker, index_service_worker):
 
     if recall_button and query_input:
         embeddings = llm_service_worker.get_embeddings(
-            {'texts': [query_input], "bgem3_path": project_config.default_bgem3_path})
+            {'texts': [query_input], "bgem3_path": project_config.default_embedding_path})
         search_results = index_service_worker.search_nearby({'collection_name':st.session_state.kb_name, "embeddings": embeddings})
         documents = search_results["documents"][0]
         st.write(documents)
@@ -485,24 +487,24 @@ def config_manager_first_run():
         '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n - 该服务会启动向量数据库chromaDB进程\n - 点击保存后，刷新页面，后台会加载模型并启动服务')
 
     base_model_path = st.text_input(
-        "基底模型路径(示例:/home/rwkv/RWKV-RAG-models/rwkv_rag_qa_1b6.pth):",
+        "基底模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/rwkv_rag_qa_1b6.pth):",
         key="base_model_path")
     embedding_path = st.text_input(
-        "Embedding模型路径(示例:/home/rwkv/RWKV-RAG-models/bge-m31):", key="embedding_path")
+        "Embedding模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/bge-m31):", key="embedding_path")
     reranker_path = st.text_input(
-        "Reranker模型路径(示例:/home/rwkv/RWKV-RAG-models/BAAIbge-reranker-v2-m3):",
+        "Reranker模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/BAAIbge-reranker-v2-m3):",
         key="reranker_path")
     chroma_path = st.text_input(
-        "chromaDB数据存储目录(确保目录存在,示例：/home/rwkv/RWKV-RAG-Data/chroma):",
+        "chromaDB数据存储目录(确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data/chroma):",
         key="chroma_path")
     chroma_port = st.text_input("chromaDB对外提供服务端口(确保端口没有被其它进程占用):", key="chroma_port",
                                 value='9998')
 
     knowledge_base_path = st.text_input(
-        "知识库文件存储目录(即上传或在线搜索知识文件存放位置，确保目录存在,示例：/home/rwkv/RWKV-RAG-Data):",
+        "知识库文件存储目录(即上传或在线搜索知识文件存放位置，确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data):",
         key="knowledge_base_path")
     sqlite_db_path = st.text_input(
-        "后端服务SqLite3数据库路径(确保路径存在即可，文件系统会自动创建，示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
+        "后端服务SqLite3数据库路径(确保路径存在即可，文件系统会自动创建，Linux示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
         key="sqlite_db_path")
 
     if st.button("保存", key="save_config"):
@@ -537,24 +539,24 @@ def config_manage():
         '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n 该服务会启动向量数据库chromaDB进程 \n 点击保存，重启服务')
 
     base_model_path = st.text_input(
-        "基底模型路径(示例:/home/rwkv/RWKV-RAG-models/rwkv_rag_qa_1b6.pth):",
+        "基底模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/rwkv_rag_qa_1b6.pth):",
         key="base_model_path", value=project_config.default_base_model_path)
     embedding_path = st.text_input(
-        "Embedding模型路径(示例:/home/rwkv/RWKV-RAG-models/bge-m31):", key="embedding_path", value=project_config.default_embedding_path)
+        "Embedding模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/bge-m31):", key="embedding_path", value=project_config.default_embedding_path)
     reranker_path = st.text_input(
-        "Reranker模型路径(示例:/home/rwkv/RWKV-RAG-models/BAAIbge-reranker-v2-m3):",
+        "Reranker模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/BAAIbge-reranker-v2-m3):",
         key="reranker_path", value=project_config.default_rerank_path)
     chroma_path = st.text_input(
-        "chromaDB数据存储目录(确保目录存在,示例：/home/rwkv/RWKV-RAG-Data/chroma):",
+        "chromaDB数据存储目录(确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data/chroma):",
         key="chroma_path", value=project_config.config.get('chroma_db_path'))
     chroma_port = st.text_input("chromaDB对外提供服务端口(确保端口没有被其它进程占用):", key="chroma_port",
                                 value=project_config.config.get('chroma_port'))
 
     knowledge_base_path = st.text_input(
-        "知识库文件存储目录(即上传或在线搜索知识文件存放位置，确保目录存在,示例：/home/rwkv/RWKV-RAG-Data):",
+        "知识库文件存储目录(即上传或在线搜索知识文件存放位置，确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data):",
         key="knowledge_base_path", value=project_config.config.get('knowledge_base_path'))
     sqlite_db_path = st.text_input(
-        "后端服务SqLite3数据库路径(确保路径存在即可，文件系统会自动创建，示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
+        "后端服务SqLite3数据库路径(确保路径存在即可，文件系统会自动创建，Linux示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
         key="sqlite_db_path", value=project_config.config.get('sqlite_db_path'))
 
     if st.button("保存", key="save_config"):

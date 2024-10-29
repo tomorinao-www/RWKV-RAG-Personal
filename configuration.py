@@ -14,7 +14,7 @@ class Configuration:
                 raise ValueError(f"Invalid config file {config_file}")
         self.config_file_path = config_file
         self.default_base_model_path = ''  # 默认基座模型路径
-        self.default_bgem3_path = ''  # 默认bgem3路径
+        self.default_embedding_path = ''  # 默认bgem3路径
         self.default_rerank_path = ''  # 默认rerank路径
         self.default_state_path = '' # 默认state文件
 
@@ -28,11 +28,11 @@ class Configuration:
         if is_init and not os.path.exists(base_model_file):
             raise FileNotFoundError(f"base_model_path {base_model_file} ")
 
-        bgem3_path = settings.get("embedding_path", '')
-        if is_init and not bgem3_path:
+        embedding_path = settings.get("embedding_path", '')
+        if is_init and not embedding_path:
             raise ValueError(f"embedding_path is required")
-        if is_init and not os.path.exists(bgem3_path):
-            raise FileNotFoundError(f"embedding_path {bgem3_path} not found")
+        if is_init and not os.path.exists(embedding_path):
+            raise FileNotFoundError(f"embedding_path {embedding_path} not found")
         rerank_path = settings.get("reranker_path", '')
         if is_init and not rerank_path:
             raise ValueError(f"reranker_path is required")
@@ -40,7 +40,7 @@ class Configuration:
             raise FileNotFoundError(f"reranker_path {rerank_path} not found ")
 
         self.default_base_model_path = base_model_file.strip()
-        self.default_bgem3_path = bgem3_path
+        self.default_embedding_path = embedding_path
         self.default_rerank_path = rerank_path
 
         chroma_path = settings.get("chroma_path", '')
@@ -75,8 +75,8 @@ class Configuration:
             self.default_base_model_path = base_model_path.strip()
             self.config['base_model_path'] = base_model_path
             is_save = True
-        if embedding_path and embedding_path != self.default_bgem3_path:
-            self.default_bgem3_path = embedding_path
+        if embedding_path and embedding_path != self.default_embedding_path:
+            self.default_embedding_path = embedding_path
             self.config['embedding_path'] = embedding_path
             is_save = True
         if reranker_path and reranker_path != self.default_rerank_path:
