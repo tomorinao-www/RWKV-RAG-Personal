@@ -144,7 +144,7 @@ class LLMService:
                           top_p=0.2,
                           top_k=0,
                           alpha_frequency=0.5,
-                          alpha_presence=0.5,
+                          alpha_presence=0.67,
                           alpha_decay=0.996,
                           template_prompt=None,
                           base_model_path=None,
@@ -163,7 +163,7 @@ class LLMService:
                         alpha_presence = alpha_presence,
                         alpha_decay = alpha_decay, # gradually decay the penalty
                         token_ban = [0], # ban the generation of some tokens
-                        token_stop = [11,261], # stop generation whenever you see any token here
+                        token_stop = [0,1], # stop generation whenever you see any token here
                         chunk_len = 256)
         if not template_prompt:
             ctx = f'Instruction: {instruction}\nInput: {input_text}\n\nResponse:'
@@ -172,7 +172,7 @@ class LLMService:
         print(ctx)
         try:
             pipeline = PIPELINE(self.model, "rwkv_vocab_v20230424")
-            output = pipeline.generate(ctx, token_count=2000, args=gen_args, state=states_value)
+            output = pipeline.generate(ctx, token_count=1200, args=gen_args, state=states_value)
             return output
         except:
             raise ValueError(traceback.format_exc())
@@ -200,7 +200,7 @@ class ServiceWorker(AbstractServiceWorker):
         instruction = cmd.get("instruction")
         input_text = cmd["input_text"]
         #temperature = cmd.get('temperature')
-        #top_p = cmd.get('top_p', )
+        #top_p = cmd.get('top_p')
         state_file = cmd.get('state_file')
         template_prompt = cmd.get('template_prompt')
         base_model_path = cmd.get('base_model_path')
