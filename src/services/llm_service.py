@@ -199,7 +199,7 @@ class ServiceWorker(AbstractServiceWorker):
         instruction = cmd.get("instruction")
         input_text = cmd["input_text"]
         #temperature = cmd.get('temperature')
-        #top_p = cmd.get('top_p', )
+        #top_p = cmd.get('top_p')
         state_file = cmd.get('state_file')
         template_prompt = cmd.get('template_prompt')
         base_model_path = cmd.get('base_model_path')
