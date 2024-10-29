@@ -18,9 +18,7 @@ RWKV-RAG 使用的模型针对中文数据集进行调优，因此在中文任�
 
 - 下载 RWKV base model（基底模型）：https://huggingface.co/BlinkDL
 - 下载 BGEM3 重排序模型（rerank model）：https://huggingface.co/BAAI/bge-reranker-v2-m3
-- 下载一项嵌入模型（embedding model）
-  <!-- - 下载 RWKV Embedding 模型: https://huggingface.co/yueyulin/rwkv6_emb_4k_base -->
-  - 下载 BGEM3 Embedding 模型: https://huggingface.co/BAAI/bge-m3 
+- 下载 BGEM3 Embedding 模型: https://huggingface.co/BAAI/bge-m3 
 
 > [!TIP]  
 > 
