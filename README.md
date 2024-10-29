@@ -61,6 +61,13 @@ git clone https://github.com/AIIRWKV/RWKV-RAG-Personal.git
 ```shell
 pip3 install -r requirements.txt 
 ```
+> [!WARNING]
+> 
+> Linux 系统安装torch==2.2.2时，默认安装GPU版，如果在该Python环境下执行torch.cuda.is_available()返回的False，说明安装的是CPU版本，这时建议单独安装torch
+> ```shell
+> pip3 install torch==2.2.2  --index-url https://download.pytorch.org/whl/cu121
+```
+> 
 
 ##### Windows
 ```shell
