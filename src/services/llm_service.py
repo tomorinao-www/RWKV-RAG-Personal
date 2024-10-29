@@ -163,7 +163,7 @@ class LLMService:
                         alpha_presence = alpha_presence,
                         alpha_decay = alpha_decay, # gradually decay the penalty
                         token_ban = [0], # ban the generation of some tokens
-                        token_stop = [0,1], # stop generation whenever you see any token here
+                        token_stop = [0,1],  # stop generation whenever you see any token here
                         chunk_len = 256)
         if not template_prompt:
             ctx = f'Instruction: {instruction}\nInput: {input_text}\n\nResponse:'
