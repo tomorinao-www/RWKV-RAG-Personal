@@ -22,28 +22,31 @@ class Configuration:
 
     def validate(self, settings):
         is_init = settings.get('is_init')
-        base_model_file = settings.get("base_model_path", '')
+        if not is_init:
+            # 如果没有初始化，不做参数校验
+            return False
+        base_model_file = settings.get("base_model_path") or ''
         if is_init and not base_model_file:
             raise ValueError(f"base_model_path is required")
         if is_init and not os.path.exists(base_model_file):
             raise FileNotFoundError(f"base_model_path {base_model_file} ")
 
-        embedding_path = settings.get("embedding_path", '')
+        embedding_path = settings.get("embedding_path") or ''
         if is_init and not embedding_path:
             raise ValueError(f"embedding_path is required")
         if is_init and not os.path.exists(embedding_path):
             raise FileNotFoundError(f"embedding_path {embedding_path} not found")
-        rerank_path = settings.get("reranker_path", '')
+        rerank_path = settings.get("reranker_path") or ''
         if is_init and not rerank_path:
             raise ValueError(f"reranker_path is required")
         if is_init and not os.path.exists(rerank_path):
             raise FileNotFoundError(f"reranker_path {rerank_path} not found ")
 
         self.default_base_model_path = base_model_file.strip()
-        self.default_embedding_path = embedding_path
-        self.default_rerank_path = rerank_path
+        self.default_embedding_path = embedding_path.strip()
+        self.default_rerank_path = rerank_path.strip()
 
-        chroma_path = settings.get("chroma_path", '')
+        chroma_path = settings.get("chroma_path") or ''
         if is_init and not chroma_path:
             raise ValueError(f"chroma_path is required ")
         if is_init and not os.path.exists(chroma_path):

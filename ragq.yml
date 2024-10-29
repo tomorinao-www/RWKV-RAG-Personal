@@ -1,10 +1,10 @@
-base_model_path: /home/rwkv/RWKV-RAG-models/rwkv_rag_qa_3b.pth
+base_model_path:
 chroma_host: localhost
-chroma_path: /home/rwkv/RWKV-RAG-Data/chroma
+chroma_path:
 chroma_port: 9998
-embedding_path: /home/rwkv/RWKV-RAG-models/bge-m31
+embedding_path:
 is_init: false
-knowledge_base_path: /home/rwkv/RWKV-RAG-Data
-reranker_path: /home/rwkv/RWKV-RAG-models/BAAIbge-reranker-v2-m3
-sqlite_db_path: /home/rwkv/RWKV-RAG-Data/files_services.db
+knowledge_base_path:
+reranker_path:
+sqlite_db_path:
 strategy:

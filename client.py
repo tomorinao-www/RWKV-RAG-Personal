@@ -7,21 +7,21 @@ from collections import OrderedDict
 
 import streamlit as st
 import pandas as pd
-from torch.backends.opt_einsum import strategy
 
 from src.utils.loader import Loader
 from src.utils.internet import search_on_baike
 from configuration import config as project_config
 
+if project_config.config.get('is_init'):
+    parent_dir = project_config.config.get('knowledge_base_path')
+    default_knowledge_base_dir = os.path.join(parent_dir, "knowledge_data") # 默认联网知识的存储位置
+    if not os.path.exists(default_knowledge_base_dir):
+        os.makedirs(default_knowledge_base_dir)
 
-parent_dir = project_config.config.get('knowledge_base_path')
-default_knowledge_base_dir = os.path.join(parent_dir, "knowledge_data") # 默认联网知识的存储位置
-if not os.path.exists(default_knowledge_base_dir):
-    os.makedirs(default_knowledge_base_dir)
+    default_upload_knowledge_base_dir = os.path.join(default_knowledge_base_dir, "upload_knowledge")
+    if not os.path.exists(default_upload_knowledge_base_dir):
+        os.makedirs(default_upload_knowledge_base_dir)
 
-default_upload_knowledge_base_dir = os.path.join(default_knowledge_base_dir, "upload_knowledge")
-if not os.path.exists(default_upload_knowledge_base_dir):
-    os.makedirs(default_upload_knowledge_base_dir)
 
 
 
@@ -441,7 +441,7 @@ def config_manager_first_run():
 
     st.markdown("#### 4. 设置配置")
     st.warning(
-        '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n - 该服务会启动向量数据库chromaDB进程\n - 点击保存后，刷新页面，后台会加载模型并启动服务')
+        '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n - 该服务会启动向量数据库chromaDB进程\n - 点保存成功后，刷新页面，后台会加载模型并启动服务')
 
     base_model_path = st.text_input(
         "基底模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/rwkv_rag_qa_1b6.pth):",
@@ -489,6 +489,7 @@ def config_manager_first_run():
 
 
         project_config.set_config(base_model_path, embedding_path, reranker_path, knowledge_base_path, sqlite_db_path, chroma_path, chroma_port)
+        st.success('保存成功!')
 
 def config_manage():
     st.markdown("#### 4. 设置配置")
