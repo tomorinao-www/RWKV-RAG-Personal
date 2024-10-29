@@ -58,27 +58,31 @@ git clone https://github.com/AIIRWKV/RWKV-RAG-Personal.git
 进入到项目目录，安装Python依赖
 
 ##### Linux
+
 ```shell
 pip3 install -r requirements.txt 
 ```
+
 > [!WARNING]
 > 
 > Linux 系统安装torch==2.2.2时，默认安装GPU版，如果在该Python环境下执行torch.cuda.is_available()返回的False，说明安装的是CPU版本，这时建议单独安装torch
 > ```shell
 > pip3 install torch==2.2.2  --index-url https://download.pytorch.org/whl/cu121
-```
-> 
+>```
+
 
 ##### Windows
+
 ```shell
 pip3.exe install -r requirements.txt
 ```
+
 > [!WARNING]
 > 
 > Windows 系统安装torch==2.2.2时，默认安装CPU版，如果在该Python环境下执行torch.cuda.is_available()返回的False，说明安装的是CPU版本，这时建议单独安装torch
 > ```shell
 > pip3.exe install torch==2.2.2  --index-url https://download.pytorch.org/whl/cu121
-```
+>```
 > 
 
 安装完依赖项后，需要为```playwright```安装浏览器驱动。
@@ -91,6 +95,7 @@ playwright install-deps
 ``` 
 
 ##### Windows
+
 ```shell
 playwright.exe install
 playwright.exe install-deps
