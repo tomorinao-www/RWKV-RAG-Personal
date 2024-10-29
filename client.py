@@ -170,7 +170,7 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
     # 询问用户输入payload的方式
     input_method = st.selectbox(
         "请选择知识入库方式",
-        ["服务端文件", "本地上传", "手动输入"],
+        ["本地文件", "手动输入"],
         index=0
     )
 
@@ -184,7 +184,7 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
                 embeddings = llm_service_worker.get_embeddings({'texts': tmp, "bgem3_path": project_config.default_embedding_path})
                 result = index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings, 'collection_name': st.session_state.kb_name})
                 st.write(f"文本 {idx + 1}: {result}")
-    elif input_method == "服务端文件":
+    elif input_method == "本地文件":
         st.markdown(
             '<span style="font-size: 12px; color: blue;">❗服务端文件指该知识库文件在项目部署的服务器上,如果你知道这个文件在项目部署的服务器上位置,'
             '填写到输入知识库路径输入框 </span>',
@@ -232,50 +232,7 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
 
         elif load_button:
             st.warning("参数不能为空。")
-    elif input_method == '本地上传':
-        st.markdown(
-            '<span style="font-size: 12px; color: blue;">❗本地上传是指将电脑上的txt,pdf等格式的知识文件上传到服务器后，然后进行入库</span>',
-            unsafe_allow_html=True)
-        payload_file = st.file_uploader("请上传文件", type=["txt", "pdf"], key="payload_input")
-        if 'now_upload_file' not in st.session_state:
-            st.session_state.now_upload_file = ''
-        if payload_file and not st.session_state.now_upload_file:
-            file_name = payload_file.name
-            file_name_prefix, file_ext = file_name.rsplit('.', 1)
-            output_name_prefix = '%s_%s.%s' % (file_name_prefix, get_random_string(4), file_ext)
-            output_path = os.path.join(default_upload_knowledge_base_dir, output_name_prefix) # 文件在服务器的位置
-            with open(output_path, 'wb') as f:
-                f.write(payload_file.read())
-                st.success("文件已上传并保存到: %s" % output_path)
-                st.session_state.now_upload_file = output_path
-        if payload_file and st.session_state.now_upload_file:
-            chunk_size = st.number_input("请输入块大小（字符数）:", min_value=1, value=512, key="chunk_size_key")
-            chunk_overlap = st.number_input("请输入块重叠（字符数）:", min_value=1, value=8, key="chunk_overlap_key")
-            load_button = st.button("加载并分割文件")
-            input_path = st.session_state.now_upload_file
-            if load_button:
-                try:
-                    loader = Loader(input_path, chunk_size, chunk_overlap)
-                except Exception as e:
-                    loader = None
-                    st.warning("文件加载和分割过程中出现错误:" + str(e))
-                is_success = False
-                if loader:
-                    chunks = loader.load_and_split_file(default_upload_knowledge_base_dir)
 
-                    for idx,chunk in enumerate(chunks):
-                        tmp = [chunk]
-                        embeddings = llm_service_worker.get_embeddings(
-                            {'texts': tmp, "bgem3_path": project_config.default_embedding_path})
-                        index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings,
-                                                          'collection_name': st.session_state.kb_name})
-                    st.success(f"文件已加载并分割完成！分割后文件路径:{loader.output_files}")
-                    is_success = True
-                # 记录文件入库状态
-                if is_success:
-                    for path in loader.output_files:
-                        if not files_status_manager.check_file_exists(path, st.session_state.kb_name):
-                            files_status_manager.add_file(path, st.session_state.kb_name)
 
 
 
@@ -602,7 +559,7 @@ def main():
         set_page_style()
 
         with st.sidebar:
-            st.header("RWKV RAGQ")
+            st.header("RWKV-RAG 个人版")
             st.write('\n')
             # 创建垂直排列的标签页
             app_scenario = st.radio('', tabs_title)
