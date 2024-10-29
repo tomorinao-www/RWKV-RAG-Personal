@@ -14,7 +14,7 @@ RWKV-RAG 使用的模型针对中文数据集进行调优，因此在中文任�
 
 ## 模型下载
 
-完整的 RWKV-RAG-Personal 服务需要以下四种模型/文件，请将以下四类模型下载到你的 Linux 工作区：
+完整的 RWKV-RAG-Personal 服务需要以下模型文件，请将以下模型下载到工作区：
 
 - 下载 RWKV base model（基底模型）：https://huggingface.co/SupYumm/rwkv6_rag_qabot/tree/main
 - 下载 BGEM3 重排序模型（rerank model）：https://huggingface.co/BAAI/bge-reranker-v2-m3
