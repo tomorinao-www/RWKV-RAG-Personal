@@ -1,11 +1,11 @@
 torch==2.2.2
-beautifulsoup4
+beautifulsoup4==4.12.3
 chromadb==0.5.13
 PyMuPDF==1.24.4
-FlagEmbedding
-playwright
+FlagEmbedding==1.2.10
+playwright==1.44.0
 PyYAML==6.0.1
-rwkv
-streamlit
+rwkv==0.8.26
+streamlit==1.39.0
 pytesseract==0.3.13
-psutil
+psutil==6.1.0
