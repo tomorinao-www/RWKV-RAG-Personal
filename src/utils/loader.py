@@ -60,6 +60,7 @@ class Loader:
             while start < batch_length:
                 end = start + chunk_size
                 current_chunk = batch_content[start:end]
+                current_chunk = current_chunk.replace('\n', '').replace('\r\n', '')
                 yield current_chunk
 
                 # 更新起始位置，考虑重叠

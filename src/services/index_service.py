@@ -5,7 +5,7 @@ from datetime import datetime
 from multiprocessing import Lock
 
 import chromadb
-
+import psutil
 from src.services import AbstractServiceWorker
 
 
@@ -48,14 +48,10 @@ class ServiceWorker(AbstractServiceWorker):
 
     @staticmethod
     def init_once(config):
-        # 检测chroma db是否已启动
-        command1 = "ps -ef | grep '{}'".format("chroma")
-        output = subprocess.check_output(command1, shell=True, text=True)
-        processes = [line for line in output.split('\n')]
-        for o in processes:
-            if 'chroma run ' in o:
-                print("chroma db is running")
+        for proc in psutil.process_iter(['pid', 'name']):
+            if 'chroma' == proc.info['name'].lower() or 'chroma.exe' == proc.info['name'].lower():
                 return True
+
 
         chroma_path = config.get("chroma_path")
         chroma_port = config.get("chroma_port")
