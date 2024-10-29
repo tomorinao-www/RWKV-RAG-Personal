@@ -38,7 +38,7 @@ RWKV-RAG 使用的模型针对中文数据集进行调优，因此在中文任�
 > 
 
 
-目前 BGEM3 更适合作为 RWKV-RAG 系统的 rerank 和 embedding 模型。我们也在开发性能更强的 RWKV embedding 和 rerank 模型，以替换掉 BGEM3 模型。
+目前 BGEM3 更适合作为 RWKV-RAG-Personal 系统的 rerank 和 embedding 模型。我们也在开发性能更强的 RWKV embedding 和 rerank 模型，以替换掉 BGEM3 模型。
 
 ## 下载和安装
 
@@ -163,7 +163,7 @@ streamlit run client.py
 至此， RWKV-RAG-Personal 服务已成功启动，可以在 WebUI 客户端中体验知识库管理、问答机器人等功能。
 
 
-## RWKV-RAG 功能指引
+## RWKV-RAG-Personal 功能指引
 
 ### 模型管理
 模型管理界面用于管理 RWKV-RAG-Personal 系统的基底模型。支持对基底模型进行添加、修改、上线、下线和重启等操作。
@@ -218,7 +218,7 @@ RWKV-RAG-CHAT 的工作流程如下：
 
 1. **输入查询内容，点击 “召回” 按钮**
 
-2. **RWKV-RAG 从知识库中提取最相关的知识（文本块）**
+2. **RWKV-RAG-Personal 从知识库中提取最相关的知识（文本块）**
 
 3. **rerank 模型对提取出来的文本块进行匹配度打分，选出最佳匹配知识**
 
