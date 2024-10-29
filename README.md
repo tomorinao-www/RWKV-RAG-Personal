@@ -125,7 +125,7 @@ tesseract --list-langs  # 查看已安装语言包
 ##### Windows
 - ```tesseract```[下载页面](https://digi.bib.uni-mannheim.de/tesseract/)根据电脑系统选择合适的exe安装包进行安装，并将安装路径(默认路径 ```C:\Program Files\Tesseract-OCR\tessdata```)添加到系统环境
 - 安装完成之后，直接在cmd输入： ```tesseract -v```，如果能输出```tesseract```版本号，说明安装成功；如果提示命令不存在，那可能是没有将安装路径添加到系统环境变量中，可自行搜索如何添加环境变量。
-- 在(语言包页面)[https://github.com/tesseract-ocr/tessdata)选择```chi_sim.traineddata```，然后下载并复制到安装路路里，即与```eng.traineddata```(默认会安装此语言包)同级目录。
+- 在[语言包页面](https://github.com/tesseract-ocr/tessdata) 选择```chi_sim.traineddata```，然后下载并复制到安装路路里，即与```eng.traineddata```(默认会安装此语言包)同级目录。
 - 在cmd输入： ```tesseract --list-langs```，如果能输出chi_sim，说明中文语言包安装成功。
 
 
