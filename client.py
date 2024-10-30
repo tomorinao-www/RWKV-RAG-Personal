@@ -461,7 +461,7 @@ def config_manager_first_run():
         "知识库文件存储目录(即上传或在线搜索知识文件存放位置，确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data):",
         key="knowledge_base_path")
     sqlite_db_path = st.text_input(
-        "后端服务SqLite3数据库路径(确保路径存在即可，文件系统会自动创建，Linux示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
+        "后端服务SQLite 数据库路径(确保路径存在即可，文件系统会自动创建，Linux示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
         key="sqlite_db_path")
 
     if st.button("保存", key="save_config"):
@@ -514,7 +514,7 @@ def config_manage():
         "知识库文件存储目录(即上传或在线搜索知识文件存放位置，确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data):",
         key="knowledge_base_path", value=project_config.config.get('knowledge_base_path'))
     sqlite_db_path = st.text_input(
-        "后端服务SqLite3数据库路径(确保路径存在即可，文件系统会自动创建，Linux示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
+        "后端服务SQLite 数据库路径(确保路径存在即可，文件系统会自动创建，Linux示例：/home/rwkv/RWKV-RAG-Data/files_services.db):",
         key="sqlite_db_path", value=project_config.config.get('sqlite_db_path'))
 
     if st.button("保存", key="save_config"):
