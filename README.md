@@ -2,12 +2,10 @@
 
 RWKV-RAG-Personal 是RWKV-RAG 个人版，它是一个基于 RWKV 模型的一键 RAG 部署系统，可轻松搭建和管理本地知识库，同时提供了基于本地知识库的问答机器人（RWKV-RAG-CHAT）。
 
-RWKV-RAG 使用的模型针对中文数据集进行调优，因此在中文任务上表现更佳。我们也在开发英文调优的模型，敬请期待。 
-
 
 ## 特性
 
-- **💻 带图形化界面：** RWKV-RAG-Personal 的主要功能都有用户友好的 WebUI 界面，提供直观且易于操作的用户体验
+- **💻 带图形化界面：** RWKV-RAG-Personal 的主要功能都有提供直观且易于操作的用户体验
 - **⛓️ 配置简单：** RWKV-RAG-Personal 配置简单，没有太多的配置参数
 - **🎛️ 兼容性:** RWKV-RAG-Personal 兼容Linux和Windows系统
 
@@ -16,9 +14,9 @@ RWKV-RAG 使用的模型针对中文数据集进行调优，因此在中文任�
 
 完整的 RWKV-RAG-Personal 服务需要以下模型文件，请将以下模型下载到工作区：
 
-- 下载 RWKV base model（基底模型）：https://huggingface.co/SupYumm/rwkv6_rag_qabot/tree/main
-- 下载 BGEM3 重排序模型（rerank model）：https://huggingface.co/BAAI/bge-reranker-v2-m3
-- 下载 BGEM3 Embedding 模型: https://huggingface.co/BAAI/bge-m3 
+- 下载 RWKV base model（基底模型）：[HuggingFace下载地址](https://huggingface.co/SupYumm/rwkv6_rag_qabot/tree/main)
+- 下载 BGEM3 重排序模型（rerank model）：[HuggingFace下载地址](https://huggingface.co/BAAI/bge-reranker-v2-m3)  [modelscope下载地址](https://modelscope.cn/models/BAAI/bge-reranker-v2-m3)
+- 下载 BGEM3 Embedding 模型: [[HuggingFace下载地址](https://huggingface.co/BAAI/bge-m3)   [modelscope下载地址](https://modelscope.cn/models/BAAI/bge-m3)
 
 > [!TIP]  
 > 
