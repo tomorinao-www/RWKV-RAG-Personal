@@ -10,7 +10,9 @@ import pandas as pd
 
 from src.utils.loader import Loader
 from src.utils.internet import search_on_baike
+from src.vectordb import VECTORDB_USED_LIMIT
 from configuration import config as project_config
+from configuration import OS_NAME
 
 if project_config.config.get('is_init'):
     parent_dir = project_config.config.get('knowledge_base_path')
@@ -246,8 +248,8 @@ def rag_chain(llm_service_worker, index_service_worker):
     if recall_button and query_input:
         embeddings = llm_service_worker.get_embeddings(
             {'texts': [query_input], "bgem3_path": project_config.default_embedding_path})
-        search_results = index_service_worker.search_nearby({'collection_name':st.session_state.kb_name, "embeddings": embeddings})
-        documents = search_results["documents"][0]
+        documents = index_service_worker.search_nearby({'collection_name':st.session_state.kb_name, "embeddings": embeddings})
+        print(embeddings, 'oooooooodddddddddddddddddddddddddddd')
         st.write(documents)
         cross_scores = llm_service_worker.get_cross_scores({"texts_0": [query_input for i in range(len(documents))],
                                                             "texts_1": documents,
@@ -441,7 +443,7 @@ def config_manager_first_run():
 
     st.markdown("#### 4. 设置配置")
     st.warning(
-        '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n - 该服务会启动向量数据库chromaDB进程\n - 点保存成功后，刷新页面，后台会加载模型并启动服务')
+        '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n - 该服务会启动向量数据库进程\n - 点保存成功后，刷新页面，后台会加载模型并启动服务')
 
     base_model_path = st.text_input(
         "基底模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/rwkv_rag_qa_1b6.pth):",
@@ -451,10 +453,11 @@ def config_manager_first_run():
     reranker_path = st.text_input(
         "Reranker模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/BAAIbge-reranker-v2-m3):",
         key="reranker_path")
-    chroma_path = st.text_input(
-        "chromaDB数据存储目录(确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data/chroma):",
-        key="chroma_path")
-    chroma_port = st.text_input("chromaDB对外提供服务端口(确保端口没有被其它进程占用):", key="chroma_port",
+    vectordb_name = st.selectbox("选择向量数据库类型:", VECTORDB_USED_LIMIT.get(OS_NAME, []) , key="vectordb_name")
+    vectordb_path = st.text_input(
+        "向量数据存储目录(确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data/chroma):",
+        key="vectordb_path")
+    vectordb_port = st.text_input("向量数据库对外提供服务端口(确保端口没有被其它进程占用):", key="vectordb_port",
                                 value='9998')
 
     knowledge_base_path = st.text_input(
@@ -488,13 +491,14 @@ def config_manager_first_run():
             return
 
 
-        project_config.set_config(base_model_path, embedding_path, reranker_path, knowledge_base_path, sqlite_db_path, chroma_path, chroma_port)
+        project_config.set_config(base_model_path, embedding_path, reranker_path, knowledge_base_path, sqlite_db_path,
+                                  vectordb_path, vectordb_port, vectordb_name=vectordb_name)
         st.success('保存成功!')
 
 def config_manage():
-    st.markdown("#### 4. 设置配置")
+    st.markdown("#### 设置配置")
     st.warning(
-        '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n 该服务会启动向量数据库chromaDB进程 \n 点击保存，重启服务')
+        '对应的配置文件 raqg.yml, 点击保存后会更新该配置文件的配置参数 \n 该服务会启动向量数据库服务进程 \n 点击保存，重启服务')
 
     base_model_path = st.text_input(
         "基底模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/rwkv_rag_qa_1b6.pth):",
@@ -504,11 +508,12 @@ def config_manage():
     reranker_path = st.text_input(
         "Reranker模型路径(Linux示例:/home/rwkv/RWKV-RAG-models/BAAIbge-reranker-v2-m3):",
         key="reranker_path", value=project_config.default_rerank_path)
-    chroma_path = st.text_input(
-        "chromaDB数据存储目录(确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data/chroma):",
-        key="chroma_path", value=project_config.config.get('chroma_path'))
-    chroma_port = st.text_input("chromaDB对外提供服务端口(确保端口没有被其它进程占用):", key="chroma_port",
-                                value=project_config.config.get('chroma_port'))
+    st.selectbox("选择向量数据库类型:", [project_config.default_vectordb_name], disabled=True)
+    vectordb_path = st.text_input(
+        "向量数据存储目录(确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data/chroma):",
+        key="vectordb_path", value=project_config.config.get('vectordb_path'))
+    vectordb_port = st.text_input("向量数据库对外提供服务端口(确保端口没有被其它进程占用):", key="vectordb_port",
+                                value=project_config.config.get('vectordb_port'))
 
     knowledge_base_path = st.text_input(
         "知识库文件存储目录(即上传或在线搜索知识文件存放位置，确保目录存在,Linux示例：/home/rwkv/RWKV-RAG-Data):",
@@ -540,7 +545,7 @@ def config_manage():
             st.error("知识库文件存储目录必须是目录")
             return
         project_config.set_config(base_model_path, embedding_path, reranker_path, knowledge_base_path, sqlite_db_path,
-                              chroma_path, chroma_port)
+                              vectordb_path, vectordb_port)
 
 def main():
     # 初始化客户端

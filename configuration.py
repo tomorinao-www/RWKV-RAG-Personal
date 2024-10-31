@@ -1,6 +1,6 @@
 import os
+import platform
 import yaml
-
 
 
 class Configuration:
@@ -17,6 +17,7 @@ class Configuration:
         self.default_embedding_path = ''  # 默认bgem3路径
         self.default_rerank_path = ''  # 默认rerank路径
         self.default_state_path = '' # 默认state文件
+        self.default_vectordb_name = 'chromadb'
 
         self.validate(self.config)
 
@@ -46,18 +47,20 @@ class Configuration:
         self.default_embedding_path = embedding_path.strip()
         self.default_rerank_path = rerank_path.strip()
 
-        chroma_path = settings.get("chroma_path") or ''
-        if is_init and not chroma_path:
-            raise ValueError(f"chroma_path is required ")
-        if is_init and not os.path.exists(chroma_path):
-            raise NotADirectoryError(f"chroma_path {chroma_path} ")
-        chroma_host = settings.get("chroma_host", '0.0.0.0')
-        if is_init and not chroma_host:
-            raise ValueError(f"chroma_host is required for index service")
+        vectordb_name = settings.get("vectordb_name") or 'chromadb'
+        self.default_vectordb_name = vectordb_name
+        vectordb_path = settings.get("vectordb_path") or ''
+        if is_init and not vectordb_path:
+            raise ValueError(f"vectordb_path is required ")
+        if is_init and not os.path.exists(vectordb_path):
+            raise NotADirectoryError(f"vectordb_path {vectordb_path} ")
+        vectordb_host = settings.get("vectordb_host", '0.0.0.0')
+        if is_init and not vectordb_host:
+            raise ValueError(f"vectordb_host is required for index service")
 
-        chroma_port = settings.get("chroma_port", '')
-        if not (isinstance(chroma_port, int) or (isinstance(chroma_port, str) and chroma_port.isdigit())):
-            raise ValueError(f"chroma_port is required for index service")
+        vectordb_port = settings.get("vectordb_port", '')
+        if not (isinstance(vectordb_port, int) or (isinstance(vectordb_port, str) and vectordb_port.isdigit())):
+            raise ValueError(f"vectordb_port is required for index service")
 
         sqlite_db_path = settings.get("sqlite_db_path", '')
         if is_init and not sqlite_db_path:
@@ -70,9 +73,8 @@ class Configuration:
             if is_init and not os.path.exists(knowledge_base_path):
                 raise NotADirectoryError(f"knowledge_base_path {knowledge_base_path}")
 
-
     def set_config(self, base_model_path=None, embedding_path=None, reranker_path=None,
-                   knowledge_base_path=None,sqlite_db_path=None, chroma_path=None, chroma_port=None,strategy=None):
+                   knowledge_base_path=None,sqlite_db_path=None, vectordb_path=None, vectordb_port=None,strategy=None, vectordb_name=None):
         is_save = False
         if base_model_path and base_model_path != self.default_base_model_path:
             self.default_base_model_path = base_model_path.strip()
@@ -91,11 +93,15 @@ class Configuration:
         if sqlite_db_path and sqlite_db_path != self.config.get("sqlite_db_path"):
             self.config['sqlite_db_path'] = sqlite_db_path
             is_save = True
-        if chroma_path and chroma_path != self.config.get("chroma_path"):
-            self.config['chroma_path'] = chroma_path
+        if vectordb_name and vectordb_name != self.config.get("vectordb_name"):
+            self.config['vectordb_name'] = vectordb_name
+            self.default_vectordb_name = vectordb_name
             is_save = True
-        if chroma_port and chroma_port != self.config.get("chroma_port"):
-            self.config['chroma_port'] = chroma_port
+        if vectordb_path and vectordb_path != self.config.get("vectordb_path"):
+            self.config['vectordb_path'] = vectordb_path
+            is_save = True
+        if vectordb_port and vectordb_port != self.config.get("vectordb_port"):
+            self.config['vectordb_port'] = vectordb_port
             is_save = True
         if strategy and strategy != self.config.get("strategy"):
             self.config['strategy'] = strategy
@@ -108,5 +114,4 @@ class Configuration:
 
 config = Configuration("ragq.yml")
 
-
-
+OS_NAME = platform.system().lower()
