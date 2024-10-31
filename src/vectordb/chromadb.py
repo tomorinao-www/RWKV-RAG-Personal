@@ -79,7 +79,7 @@ class ChromaDBManager(AbstractVectorDBManager, ABC):
         if keys is None or isinstance(keys, list) is False or len(keys) != len(values):
             keys = [str(uuid.uuid4()) for i in range(len(values))]
         client = self.client()
-        new_embeddings = [eb.to_list() for eb in embeddings]
+        new_embeddings = [eb for eb in embeddings]
         try:
             collection = client.get_collection(collection_name)
         except:

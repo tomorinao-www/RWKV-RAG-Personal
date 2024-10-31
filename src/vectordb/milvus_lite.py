@@ -23,7 +23,6 @@ class MilvusLiteManager(AbstractVectorDBManager, ABC):
         if self._client is None:
             if not self.db_path.endswith('.db'):
                 self.db_path = os.path.join(self.db_path, 'milvus_lite.db')
-                print(self.db_path, 'rrrrrr')
             try:
                 self._client = pymilvus.MilvusClient(self.db_path)
                 return self._client
@@ -52,8 +51,12 @@ class MilvusLiteManager(AbstractVectorDBManager, ABC):
                   FieldSchema(name='vector', dtype=DataType.FLOAT16_VECTOR, descrition='vector', dim=VECTOR_DB_DIMENSION),
                   FieldSchema(name='text', dtype=DataType.VARCHAR, descrition='text', max_length=MAX_LINE_LENGTH)
                   ]
+        index_params = client.prepare_index_params()
+        index_params.add_index(field_name='vector', metric_type='COSINE',index_type='FLAT',
+                               index_name=f'{collection_name}_vector_index')
         schema = CollectionSchema(fields, description="RWKV-RAG Collection")
-        client.create_collection(collection_name, schema=schema)
+        client.create_collection(collection_name, schema=schema, index_params=index_params)
+        client.get_load_state(collection_name)
         return True
 
     def delete_collection(self, collection_name: str):
@@ -75,8 +78,6 @@ class MilvusLiteManager(AbstractVectorDBManager, ABC):
             keys = [str(uuid.uuid4()) for i in range(len(values))]
         client = self.client()
         new_embeddings = [self.padding_vectors(eb) for eb in embeddings]
-        print(type(new_embeddings[0]))
-        print(type(new_embeddings[0][0]))
         # TODO 有一个subject参数，可以加快向量查询速度， 在产品设计上，是否也可以加该字段
         data = [ {"id": i, "vector": v, "text": doc} for i, v, doc in itertools.zip_longest(keys, new_embeddings, values)]
         try:
@@ -88,15 +89,13 @@ class MilvusLiteManager(AbstractVectorDBManager, ABC):
     def search_nearby(self, kwargs: dict):
         collection_name = kwargs.get('collection_name')
         embeddings = kwargs.get('embeddings')
-        print(type(embeddings[0]))
-        print(type(embeddings[0][0]))
-        print('tttttttttttttttttttttttt')
-        print(len(embeddings[0]))
         client = self.client()
         if not client.has_collection(collection_name):
             raise VectorDBCollectionNotExistError()
         search_result = client.search(collection_name=collection_name, data=embeddings,
                                       limit=RECALL_NUMBER,
-                                      #search_params={"metric_type": "COSINE", "params": {}},
+                                      search_params={"metric_type": "COSINE", "params": {}},
                                       output_fields=['text'])
-        return search_result
+        if search_result:
+            return [i['entity']['text'] for i in search_result[0]]
+        return []

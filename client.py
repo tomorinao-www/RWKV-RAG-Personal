@@ -249,7 +249,6 @@ def rag_chain(llm_service_worker, index_service_worker):
         embeddings = llm_service_worker.get_embeddings(
             {'texts': [query_input], "bgem3_path": project_config.default_embedding_path})
         documents = index_service_worker.search_nearby({'collection_name':st.session_state.kb_name, "embeddings": embeddings})
-        print(embeddings, 'oooooooodddddddddddddddddddddddddddd')
         st.write(documents)
         cross_scores = llm_service_worker.get_cross_scores({"texts_0": [query_input for i in range(len(documents))],
                                                             "texts_1": documents,
