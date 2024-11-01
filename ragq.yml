@@ -1,6 +1,6 @@
 base_model_path:
 embedding_path:
-is_init: true
+is_init: false
 knowledge_base_path:
 reranker_path:
 sqlite_db_path:
