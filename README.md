@@ -154,7 +154,7 @@ tesseract --list-langs  # 查看已安装语言包
 - **reranker_path**: 重排序模型的路径，推荐使用: BAAIbge-reranker-v2-m3
 
 ##### 数据库相关参数
-- **chroma_db_path**: ChromaDB 数据库存放数据路径，确保路径是存在的
+- **chroma_path**: ChromaDB 数据库存放数据路径，确保路径是存在的
 - **chroma_port**: ChromaDB 端口
 - **chroma_host**: ChromaDB 服务地址，该项目运行时在本地会启动ChromaDB服务，所以可填```localhost```、```127.0.0.1```,默认值```localhost```
 - **sqlite_db_path**: SQLite 数据库存放数据位置，确保所填写的文件路径对应的文件夹存在。
