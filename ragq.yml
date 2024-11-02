@@ -1,10 +1,11 @@
 base_model_path:
-chroma_host: localhost
-chroma_path:
-chroma_port: 9998
 embedding_path:
 is_init: false
 knowledge_base_path:
 reranker_path:
 sqlite_db_path:
 strategy:
+vectordb_host:
+vectordb_name:
+vectordb_path:
+vectordb_port:
