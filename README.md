@@ -154,15 +154,11 @@ tesseract --list-langs  # 查看已安装语言包
 - **reranker_path**: 重排序模型的路径，推荐使用: BAAIbge-reranker-v2-m3
 
 ##### 数据库相关参数
-<<<<<<< HEAD
-- **chroma_path**: ChromaDB 数据库存放数据路径，确保路径是存在的
-- **chroma_port**: ChromaDB 端口
-- **chroma_host**: ChromaDB 服务地址，该项目运行时在本地会启动ChromaDB服务，所以可填```localhost```、```127.0.0.1```,默认值```localhost```
-=======
 
 - **vectordb_name**: 向量数据库名词，目前已集成如下向量数据库：
   - **Linux**：chromadb,milvus Lite版
   - **Windows**: chromadb
+  
   > [!WARNING]
   > 
   > 默认使用的是chromadb，如果要使用其它向量数据库请先安装相关Python包
@@ -170,7 +166,6 @@ tesseract --list-langs  # 查看已安装语言包
 - **vectordb_path**: 向量数据库存放数据路径，确保路径是存在的
 - **vectordb_port**: 向量数据库服务端口
 - **vectordb_host**: 向量数据库服务地址，该项目运行时在本地会启动向量数据库服务，所以可填```localhost```、```127.0.0.1```,默认值```localhost```
->>>>>>> 9570ed962ecb511bbd3ef7d540bdd0b7a6b61c58
 - **sqlite_db_path**: SQLite 数据库存放数据位置，确保所填写的文件路径对应的文件夹存在。
 
 ##### 其它参数
