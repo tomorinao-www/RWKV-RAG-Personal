@@ -14,19 +14,6 @@ from src.vectordb import VECTORDB_USED_LIMIT, VectorDBError
 from configuration import config as project_config
 from configuration import OS_NAME
 
-if project_config.config.get('is_init'):
-    parent_dir = project_config.config.get('knowledge_base_path')
-    default_knowledge_base_dir = os.path.join(parent_dir, "knowledge_data") # 默认联网知识的存储位置
-    if not os.path.exists(default_knowledge_base_dir):
-        os.makedirs(default_knowledge_base_dir)
-
-    default_upload_knowledge_base_dir = os.path.join(default_knowledge_base_dir, "upload_knowledge")
-    if not os.path.exists(default_upload_knowledge_base_dir):
-        os.makedirs(default_upload_knowledge_base_dir)
-
-
-
-
 
 async def search_and_notify(search_query, output_dir, output_filename):
     # Run the async search function
@@ -130,7 +117,7 @@ def knowledgebase_manager(index_service_worker, files_status_manager):
             st.warning("该知识库下没有找到任何文件。")
 
 
-def internet_search(llm_service_worker, index_service_worker, files_status_manager):
+def internet_search(llm_service_worker, index_service_worker, files_status_manager, default_knowledge_base_dir):
     """
     知识入库
     """
@@ -569,6 +556,15 @@ def main():
     else:
         from src.services import index_service_worker, llm_service_worker, files_status_manager
 
+        parent_dir = project_config.config.get('knowledge_base_path')
+        default_knowledge_base_dir = os.path.join(parent_dir, "knowledge_data") # 默认联网知识的存储位置
+        if not os.path.exists(default_knowledge_base_dir):
+            os.makedirs(default_knowledge_base_dir)
+
+        default_upload_knowledge_base_dir = os.path.join(default_knowledge_base_dir, "upload_knowledge")
+        if not os.path.exists(default_upload_knowledge_base_dir):
+            os.makedirs(default_upload_knowledge_base_dir)
+
         tabs_title = ["模型管理", "知识库管理", "知识入库", "知识问答", "配置管理"]
 
 
@@ -607,7 +603,7 @@ def main():
         elif app_scenario == tabs_title[1]:
             knowledgebase_manager(index_service_worker, files_status_manager)
         elif app_scenario == tabs_title[2]:
-            internet_search(llm_service_worker, index_service_worker, files_status_manager)
+            internet_search(llm_service_worker, index_service_worker, files_status_manager, default_knowledge_base_dir)
 
         elif app_scenario == tabs_title[3]:
             st.title("知识问答")
