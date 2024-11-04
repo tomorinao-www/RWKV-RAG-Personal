@@ -10,7 +10,7 @@ import pandas as pd
 
 from src.utils.loader import Loader
 from src.utils.internet import search_on_baike
-from src.vectordb import VECTORDB_USED_LIMIT
+from src.vectordb import VECTORDB_USED_LIMIT, VectorDBError
 from configuration import config as project_config
 from configuration import OS_NAME
 
@@ -69,7 +69,11 @@ def set_page_style():
 def knowledgebase_manager(index_service_worker, files_status_manager):
     st.title("知识库管理")
     # 显示所有知识库
-    collections = index_service_worker.show_collections({})
+    try:
+        collections = index_service_worker.show_collections({})
+    except VectorDBError as e:
+        st.error(str(e))
+        collections = []
     if collections:
         st.subheader("知识库列表")
         collection_name_list = [i[0] for i in collections]
@@ -184,8 +188,11 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
             for idx, chunk in enumerate(payload_texts):
                 tmp = [chunk]
                 embeddings = llm_service_worker.get_embeddings({'texts': tmp, "bgem3_path": project_config.default_embedding_path})
-                result = index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings, 'collection_name': st.session_state.kb_name})
-                st.write(f"文本 {idx + 1}: {result}")
+                try:
+                    result = index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings, 'collection_name': st.session_state.kb_name})
+                    st.write(f"文本 {idx + 1}: {result}")
+                except Exception as e:
+                    st.error('入库失败：%s' % str(e))
     elif input_method == "本地文件":
         st.markdown(
             '<span style="font-size: 12px; color: blue;">❗服务端文件指该知识库文件在项目部署的服务器上,如果你知道这个文件在项目部署的服务器上位置,'
@@ -221,8 +228,11 @@ def internet_search(llm_service_worker, index_service_worker, files_status_manag
                 for idx,chunk in enumerate(chunks):
                     tmp = [chunk]
                     embeddings = llm_service_worker.get_embeddings({'texts': tmp, "bgem3_path": project_config.default_embedding_path})
-                    index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings,
+                    try:
+                        index_service_worker.index_texts({"keys": None, "texts": tmp, "embeddings": embeddings,
                                                                'collection_name': st.session_state.kb_name})
+                    except Exception as e:
+                        st.error('入库失败：%s' % str(e))
                 st.success(f"文件已加载并分割完成！分割后文件路径:{loader.output_files}")
                 is_success = True
 
@@ -248,7 +258,11 @@ def rag_chain(llm_service_worker, index_service_worker):
     if recall_button and query_input:
         embeddings = llm_service_worker.get_embeddings(
             {'texts': [query_input], "bgem3_path": project_config.default_embedding_path})
-        documents = index_service_worker.search_nearby({'collection_name':st.session_state.kb_name, "embeddings": embeddings})
+        try:
+            documents = index_service_worker.search_nearby({'collection_name':st.session_state.kb_name, "embeddings": embeddings})
+        except Exception as e:
+            documents = []
+            st.error('召回数据失败:%s' % str(e))
         st.write(documents)
         cross_scores = llm_service_worker.get_cross_scores({"texts_0": [query_input for i in range(len(documents))],
                                                             "texts_1": documents,
